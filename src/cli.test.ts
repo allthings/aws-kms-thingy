@@ -37,11 +37,10 @@ describe('cli', () => {
   })
 
   it('should print usage info if no command specified', async () => {
-    process.stdout.columns = undefined // tslint:disable-line no-object-mutation
+    Object.assign(process.stdout, { columns: undefined })
 
     jest.resetAllMocks()
     jest.resetModules()
-    jest.resetModuleRegistry()
 
     const consoleSpy = jest.spyOn(console, 'info')
     const cli = require('./cli')

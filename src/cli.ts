@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// tslint:disable no-console
+// tslint:disable no-console no-expression-statement no-if-statement
 import * as readline from 'readline'
 import * as lib from './'
 import { IndexSignature } from './types'
@@ -19,14 +19,15 @@ const askQuestion = (
   return new Promise(resolve =>
     line.question(
       `\n${question}:\n\n${prompt} `,
-      answer =>
-        !line.close() &&
-        (sensitive
-          ? !readline.moveCursor(process.stdin, 0, -1) &&
-            !readline.clearLine(process.stdin, 0) &&
-            !console.log(`${prompt}  ${'*'.repeat(answer.length)}`)
-          : true) &&
-        resolve(answer.trim()),
+      answer => {
+        line.close()
+        if (sensitive) {
+          readline.moveCursor(process.stdin, 0, -1)
+          readline.clearLine(process.stdin, 0)
+          console.log(`${prompt}  ${'*'.repeat(answer.length)}`)
+        }
+        resolve(answer.trim())
+      },
     ),
   )
 }
@@ -40,14 +41,17 @@ Commands:
   - decrypt       Decrypt ciphertext encrypted with AWS KMS
 `)
 
-const prettyResult = (title: string, text: string) =>
-  !console.log(
+const prettyResult = (title: string, text: string) => {
+  console.log(
     `\n${'〰️'.repeat(
       (COLUMNS - (title.length + 2)) / 4,
     )} ${title} ${'〰️'.repeat((COLUMNS - (title.length + 2)) / 4)}\n`,
     text,
     `\n${'〰️'.repeat(COLUMNS / 2)}\n`,
-  ) && text
+  )
+
+  return text
+}
 
 async function encrypt(): Promise<string | ReadonlyArray<string>> {
   const keyId =
@@ -66,15 +70,19 @@ async function decrypt(): Promise<string | ReadonlyArray<string>> {
   return prettyResult('🔓 Decrypted', result)
 }
 
-export async function main([, , action] = process.argv): Promise<string> {
+export async function main([, , action] = process.argv): Promise<void> {
   const actions: IndexSignature = {
     decrypt,
     encrypt,
   }
 
-  return action && action in actions
-    ? !console.log(`aws-kms-thingy ${action}`) && actions[action]()
-    : printUsageText()
+  if (action && action in actions) {
+    console.log(`aws-kms-thingy ${action}`)
+
+    return actions[action]()
+  }
+
+  return printUsageText()
 }
 
 // tslint:disable-next-line no-unused-expression no-expression-statement
