@@ -37,6 +37,7 @@ describe('cli', () => {
   })
 
   it('should print usage info if no command specified', async () => {
+    // tslint:disable-next-line no-object-mutation
     Object.assign(process.stdout, { columns: undefined })
 
     jest.resetAllMocks()
