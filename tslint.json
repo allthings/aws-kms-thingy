@@ -1,3 +1,18 @@
 {
-  "extends": ["tslint-functional-preset"]
+  "extends": ["@allthings/tslint-preset"],
+  "rules": {
+    "no-expression-statement": [
+      true,
+      {
+        "ignore-prefix": [
+          "jest.",
+          "describe(",
+          "it(",
+          "expect(",
+          "beforeEach(",
+          "beforeAll("
+        ]
+      }
+    ]
+  }
 }

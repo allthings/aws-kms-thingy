@@ -1,3 +1,4 @@
+// tslint:disable:no-if-statement
 import { KMS } from 'aws-sdk' // tslint:disable-line:no-implicit-dependencies
 
 const kms = new KMS()
@@ -15,12 +16,19 @@ async function decrypt(ciphertext: string): Promise<string> {
   return dictionary.set(ciphertext, plaintext) && plaintext
 }
 
-export default (ciphertext: string): Promise<string> | string =>
-  ciphertext.length === 0 || // empty string?
-  process.env.DISABLE_AWS_KMS_THINGY || // we shouldn't decrypt?
-  !isBase64.test(ciphertext) // not a base64 encoded ciphertext?
-    ? String(ciphertext)
-    : // previously decrypted and in cache?
-      dictionary.get(ciphertext) ||
-      // decrypt it
-      decrypt(ciphertext)
+export default async (ciphertext: string): Promise<string> => {
+  const isEmptyString = ciphertext.length === 0 // empty string?
+  const decryptDisabled = ['1', 1, 'true', true].includes(process.env.DISABLE_AWS_KMS_THINGY ?? false) // we shouldn't decrypt?
+  const isBase64Encoded = isBase64.test(ciphertext) // not a base64 encoded ciphertext?
+
+  if (isEmptyString || decryptDisabled || !isBase64Encoded) {
+    return String(ciphertext)
+  }
+
+  const cached = dictionary.get(ciphertext)
+  if (cached) {
+    return cached
+  }
+
+  return decrypt(ciphertext)
+}

@@ -1,0 +1,78 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    tags: ['v[0-9]+.[0-9]+.[0-9]+*']
+    branches:
+      - master
+
+jobs:
+  security-check:
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Security audit
+        run: yarn security-check
+
+  build:
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: build
+        run: yarn build
+
+  lint:
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --ignore-scripts
+
+      - name: Code linting
+        run: yarn lint
+
+  test:
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile --ignore-scripts
+
+      - name: Unit tests
+        run: yarn test
+
+  release:
+    needs:
+      - security-check
+      - build
+      - lint
+      - test
+    if: "!contains(toJSON(github.event.commits.*.message), '[skip ci]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      # Setup .npmrc file to publish to npm
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn --frozen-lockfile
+      - run: yarn build
+      - name: Release
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx semantic-release

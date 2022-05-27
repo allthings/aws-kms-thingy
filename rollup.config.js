@@ -1,5 +1,5 @@
 import hashbang from 'rollup-plugin-hashbang'
-import resolve from 'rollup-plugin-node-resolve'
+import resolve from '@rollup/plugin-node-resolve'
 
 const external = ['aws-sdk', 'readline']
 
@@ -7,7 +7,6 @@ const plugins = [
   hashbang(),
   resolve({
     extensions: ['.js'],
-    jsnext: true,
     main: true,
     module: true,
   }),

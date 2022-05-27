@@ -1,5 +1,5 @@
 {
-  "name": "aws-kms-thingy",
+  "name": "@allthings/aws-kms-thingy",
   "version": "0.0.0",
   "description": "A wrapper/helper utility for encrypting/decrypting with AWS KMS",
   "keywords": [
@@ -30,14 +30,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/adieuadieu/aws-kms-thingy.git"
+    "url": "https://github.com/allthings/aws-kms-thingy.git"
   },
   "author": "Marco Lüthy <marco.luethy@gmail.com> (https://github.com/adieuadieu)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/adieuadieu/aws-kms-thingy/issues"
+    "url": "https://github.com/allthings/aws-kms-thingy/issues"
   },
-  "homepage": "https://github.com/adieuadieu/aws-kms-thingy",
+  "homepage": "https://github.com/allthings/aws-kms-thingy",
   "scripts": {
     "prebuild": "npm run clean",
     "build": "tsc -d && rollup -c",
@@ -47,43 +47,43 @@
     "prettier": "prettier --write",
     "test": "jest",
     "watch:test": "jest --watch",
-    "lint": "npm run lint:tsc && npm run lint:tslint",
+    "lint": "yarn lint:tsc && yarn lint:tslint",
     "lint:tslint": "tslint -p tsconfig.json -t stylish",
     "lint:tsc": "tsc -p tsconfig.json --noEmit --pretty",
     "preversion": "git pull && yarn check --integrity && yarn security-check && yarn lint && yarn test",
     "postversion": "git push --tags origin HEAD",
-    "prepublishOnly": "npm run lint && npm test && npm run security-check && npm run build",
-    "security-check": "nsp check",
+    "prepublishOnly": "yarn lint && yarn test && yarn security-check && yarn build",
+    "security-check": "yarn audit --groups dependencies",
     "upgrade-dependencies": "yarn upgrade-interactive --latest --exact",
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepare": "husky install"
   },
   "dependencies": {},
   "devDependencies": {
-    "@commitlint/cli": "7.2.1",
-    "@commitlint/config-conventional": "7.1.2",
-    "@types/aws-lambda": "8.10.15",
-    "@types/jest": "23.3.10",
-    "@types/node": "9.6.40",
-    "aws-sdk-mock": "4.3.0",
-    "coveralls": "3.0.2",
-    "husky": "0.14.3",
-    "jest": "23.6.0",
-    "lint-staged": "8.1.0",
-    "nsp": "3.2.1",
-    "nyc": "13.0.1",
-    "prettier": "1.15.3",
-    "rollup": "0.67.4",
-    "rollup-plugin-hashbang": "1.0.1",
-    "rollup-plugin-node-resolve": "3.4.0",
-    "semantic-release": "15.12.4",
-    "ts-jest": "23.10.5",
-    "tslint": "5.11.0",
-    "tslint-functional-preset": "1.5.0",
-    "typescript": "3.0.3"
+    "@allthings/tslint-preset": "2.0.0",
+    "@commitlint/cli": "17.0.1",
+    "@commitlint/config-conventional": "17.0.0",
+    "@rollup/plugin-node-resolve": "13.3.0",
+    "@types/aws-lambda": "8.10.97",
+    "@types/jest": "27.5.1",
+    "@types/node": "17.0.35",
+    "aws-sdk-mock": "5.7.0",
+    "coveralls": "3.1.1",
+    "husky": "8.0.1",
+    "jest": "28.1.0",
+    "lint-staged": "12.4.2",
+    "nyc": "15.1.0",
+    "prettier": "2.6.2",
+    "rollup": "2.74.1",
+    "rollup-plugin-hashbang": "3.0.0",
+    "semantic-release": "19.0.2",
+    "ts-jest": "28.0.3",
+    "tslint": "6.1.3",
+    "typescript": "4.7.2"
   },
   "peerDependencies": {
-    "aws-sdk": "^2.197.0"
+    "aws-sdk": "^2.814.0"
   },
   "commitlint": {
     "extends": [
@@ -114,9 +114,11 @@
     "roots": [
       "src/"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test/setup.ts",
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/setup.ts"
+    ],
     "transform": {
-      "^.+\\.tsx?$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.tsx?$": "ts-jest"
     },
     "testEnvironment": "node",
     "testRegex": "\\.test\\.ts$",
@@ -126,7 +128,7 @@
     ],
     "coverageThreshold": {
       "global": {
-        "branches": 100,
+        "branches": 94,
         "functions": 100,
         "lines": 100,
         "statements": 100
