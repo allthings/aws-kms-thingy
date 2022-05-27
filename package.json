@@ -47,16 +47,17 @@
     "prettier": "prettier --write",
     "test": "jest",
     "watch:test": "jest --watch",
-    "lint": "npm run lint:tsc && npm run lint:tslint",
+    "lint": "yarn lint:tsc && yarn lint:tslint",
     "lint:tslint": "tslint -p tsconfig.json -t stylish",
     "lint:tsc": "tsc -p tsconfig.json --noEmit --pretty",
     "preversion": "git pull && yarn check --integrity && yarn security-check && yarn lint && yarn test",
     "postversion": "git push --tags origin HEAD",
-    "prepublishOnly": "npm run lint && npm test && npm run security-check && npm run build",
-    "security-check": "yarn audit",
+    "prepublishOnly": "yarn lint && yarn test && yarn security-check && yarn build",
+    "security-check": "yarn audit --groups dependencies",
     "upgrade-dependencies": "yarn upgrade-interactive --latest --exact",
     "commitmsg": "commitlint -e $GIT_PARAMS",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "prepare": "husky install"
   },
   "dependencies": {},
   "devDependencies": {
