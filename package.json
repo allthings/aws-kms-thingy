@@ -1,6 +1,6 @@
 {
   "name": "@allthings/aws-kms-thingy",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "A wrapper/helper utility for encrypting/decrypting with AWS KMS",
   "keywords": [
     "aws",
@@ -53,6 +53,7 @@
     "preversion": "git pull && yarn check --integrity && yarn security-check && yarn lint && yarn test",
     "postversion": "git push --tags origin HEAD",
     "prepublishOnly": "yarn lint && yarn test && yarn security-check && yarn build",
+    "release": "npm publish --new-version $npm_package_version --tag latest --access public && git push --tags origin HEAD",
     "security-check": "yarn audit --groups dependencies",
     "upgrade-dependencies": "yarn upgrade-interactive --latest --exact",
     "commitmsg": "commitlint -e $GIT_PARAMS",
